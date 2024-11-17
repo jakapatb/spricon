@@ -9,8 +9,8 @@ import { ensureWrite } from './utils/file';
 const defaultSvgoConfig: SvgoConfig = {
   plugins: ['removeDimensions', 'sortAttrs'],
   js2svg: {
-    indent: 2, // string with spaces or number of spaces. 4 by default
-    pretty: true, // boolean, false by default
+    indent: 2,
+    pretty: true,
   },
 };
 
@@ -122,8 +122,12 @@ const buildSpriteSVG = async (
   const optimized = optimize(sprite, svgoConfig);
 
   // Generate unique filename
-  const hash = crypto.createHash('md5').update(sprite).digest('hex').slice(0, 8);
-  const filename = `sprite-icons-${hash}`;
+  let filename = config.output.spriteName ? `${config.output.spriteName}` : `sprite-icons`;
+
+  if (config.output.hashSuffix) {
+    const hash = crypto.createHash('md5').update(sprite).digest('hex').slice(0, 8);
+    filename = `${filename}-${hash}`;
+  }
 
   if (Array.isArray(output.spritePath)) {
     await Promise.all(

@@ -15,3 +15,8 @@ Into this:
 ```tsx
   import { InfoIcon, ArrowIcon } from './icons/generated'
 ```
+
+## Todo
+
+- [x] add spriteName option
+- [x] add hashSuffix option

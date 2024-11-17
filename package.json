@@ -1,6 +1,6 @@
 {
       "name": "spricon",
-      "version": "1.0.2",
+      "version": "1.0.3",
       "description": "A modern icon bundling powerhouse that transforms your SVG icons into an optimized sprite system with type-safe imports.",
       "author": "Jakkapat Boonroj",
       "license": "MIT",
@@ -19,7 +19,7 @@
             "build": "tsup",
             "start": "node ./dist/index.js",
             "test": "vitest",
-            "publish": "npm publish"
+            "publish": "npm publish --access public"
       },
       "dependencies": {
             "camelcase": "^8.0.0",
