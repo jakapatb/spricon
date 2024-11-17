@@ -18,7 +18,7 @@ const getSvgIconContent = (
   id: string,
   spriteHref: string,
   spriteFileName: string,
-): string => `<svg fill="none" stroke="currentColor" aria-hidden="true" color="currentColor" width="1em" height="1em">
+): string => `<svg color="currentColor" width="1em" height="1em">
 <use href="${spriteHref}/${spriteFileName}.svg#${id}" />
 </svg>`;
 
@@ -188,7 +188,7 @@ interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'name'> {
 }
 
 function Icon({ name, ...props }: IconProps) {
-  return <svg fill="none" stroke="currentColor" strokeWidth={0} aria-hidden="true" color="currentColor" width="1em" height="1em" {...props}>
+  return <svg color="currentColor" width="1em" height="1em" {...props}>
   <use href={${`\`${spriteHref ?? ''}/${spriteFileName}.svg#\${name}\``}} />
   </svg>
 }
