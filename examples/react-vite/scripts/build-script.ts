@@ -1,4 +1,4 @@
 // @ts-ignore
-import buildSpriteIcons from '../../../src/index';
+import buildSpriteIcons from '../../../dist/index';
 
-(buildSpriteIcons['default'] as any)();
+buildSpriteIcons();

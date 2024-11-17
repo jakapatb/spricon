@@ -1,4 +1,4 @@
-// import type { Config } from 'spricon';
+import type { Config } from 'spricon';
 
 export default {
   input: './icons',
@@ -6,4 +6,4 @@ export default {
     spritePath: './public',
     distPath: './src/generated',
   },
-};
+} satisfies Config;
