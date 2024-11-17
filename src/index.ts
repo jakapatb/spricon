@@ -137,7 +137,7 @@ const buildSpriteSVG = async (
 
 const readConfig = async (): Promise<Config> => {
   try {
-    const configPath = resolve(process.cwd(), 'sprite-icon-bundler.config.ts');
+    const configPath = resolve(process.cwd(), 'spricon.config.ts');
     const { default: config } = await import(configPath);
     return {
       ...config,
@@ -148,7 +148,7 @@ const readConfig = async (): Promise<Config> => {
       },
     };
   } catch (error) {
-    throw new Error('Could not load sprite-icon-bundler.config.ts configuration file');
+    throw new Error('Could not load spricon.config.ts configuration file');
   }
 };
 

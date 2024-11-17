@@ -1,4 +1,4 @@
-// import type { Config } from 'sprite-icon-bundler';
+// import type { Config } from 'spricon';
 
 export default {
   input: './icons',

@@ -5,7 +5,7 @@ import { optimize } from 'svgo';
 const program = new Command();
 
 program
-  .name('sprite-icon-bundler')
+  .name('spricon')
   .description('A tool to bundle sprite icons into a single file')
   .version('1.0.0');
 
