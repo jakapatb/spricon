@@ -1,21 +1,11 @@
 import * as fs from 'fs/promises';
-import * as fsSync from 'fs';
 import camelcase from 'camelcase';
-import { transform as svgrTransform, Config as SvgrConfig } from '@svgr/core';
-import path, { dirname, resolve } from 'path';
+import { resolve } from 'path';
 import { optimize, Config as SvgoConfig } from 'svgo';
 import crypto from 'crypto';
-
-type Output = {
-  spritePath: string | string[];
-  distPath: string;
-};
-
-export type Config = {
-  input: string;
-  output: Output;
-  svgoConfig?: SvgoConfig;
-};
+import { transform } from './transform';
+import { Config } from './types';
+import { ensureWrite } from './utils/file';
 
 const defaultSvgoConfig: SvgoConfig = {
   plugins: ['removeDimensions', 'sortAttrs'],
@@ -23,74 +13,6 @@ const defaultSvgoConfig: SvgoConfig = {
     indent: 2, // string with spaces or number of spaces. 4 by default
     pretty: true, // boolean, false by default
   },
-};
-
-interface TransformOptions {
-  react: (svg: string, componentName: string) => Promise<string>;
-}
-
-const transform: TransformOptions = {
-  react: async (svg, componentName) => {
-    const template: SvgrConfig['template'] = (variables, { tpl }) => {
-      if (variables.props.length > 0) {
-        variables.props[0].properties.unshift({
-          type: 'ObjectProperty',
-          key: { type: 'Identifier', name: 'id' },
-          value: { type: 'Identifier', name: 'id' },
-          computed: false,
-          shorthand: true,
-          decorators: null,
-        });
-      }
-
-      return tpl`
-        ${variables.imports};
-        ${variables.interfaces};
-        
-        const ${variables.componentName} = function ${variables.componentName}(${variables.props}) {
-          return ${variables.jsx};
-        };
-        
-        ${variables.exports};
-      `;
-    };
-
-    const svgrConfig: SvgrConfig = {
-      ref: true,
-      memo: true,
-      titleProp: true,
-      template,
-      jsxRuntime: 'automatic',
-      typescript: false,
-      plugins: ['@svgr/plugin-jsx'],
-      svgo: true,
-      svgoConfig: {
-        plugins: [
-          {
-            name: 'preset-default',
-            params: {
-              overrides: {
-                removeViewBox: false,
-              },
-            },
-          },
-        ],
-      },
-    };
-
-    let component = await svgrTransform(svg, svgrConfig, { componentName });
-
-    component = component.replaceAll(/(id=")([^"]*?)(")/g, 'id={id + "$2"}');
-    component = component.replaceAll(/("url\(#)([^]*?)(\)")/g, '{`url(#${id}$2)`}');
-    component = component.replace('id,', 'id="",');
-
-    return component;
-  },
-};
-
-const ensureWrite = async (fileName: string, text: string): Promise<void> => {
-  await fs.mkdir(dirname(fileName), { recursive: true });
-  await fs.writeFile(fileName, text, 'utf8');
 };
 
 const getSvgIconContent = (
