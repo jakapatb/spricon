@@ -97,12 +97,13 @@ const buildSpriteSVG = async (
       const symbolId = camelcase(file.replace('.svg', suffix), {
         pascalCase: true,
       });
-      const viewBox = content.match(/viewBox="([^"]+)"/)?.[0] ?? '';
+
+      const attributes = content.match(/(?<=<svg)[^>]+/)?.[0] ?? '';
 
       // Convert SVG to symbol
       return content
-        .replace(/<svg[^>]+>/, `<symbol id="${symbolId}" ${viewBox}>`)
-        .replace(/svg>/, 'symbol>')
+        .replace(/<svg[^>]+>/, `<symbol id="${symbolId}"${attributes}>`)
+        .replace(/<\/svg>/, '</symbol>')
         .replace(/xmlns="[^"]+"/, '');
     }),
   );
