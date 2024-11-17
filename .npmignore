@@ -1,0 +1,17 @@
+src/
+examples/
+tests/
+.github/
+.git/
+.gitignore
+tsconfig.json
+vitest.config.ts
+tsup.config.ts
+*.test.ts
+*.test.tsx
+.DS_Store
+coverage/
+node_modules/ 
+.vscode/
+.pnpm-workspace.yaml
+.prettierrc

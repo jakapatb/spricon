@@ -1,13 +1,28 @@
 {
       "name": "spricon",
-      "version": "1.0.0",
+      "version": "1.0.1",
+      "description": "SVG sprite icon generator for React applications",
+      "author": "Your Name",
+      "license": "MIT",
+      "keywords": [
+            "svg",
+            "sprite",
+            "icon",
+            "react",
+            "typescript"
+      ],
+      "repository": {
+            "type": "git",
+            "url": "https://github.com/jakapatb/spricon"
+      },
       "bin": {
             "spricon": "./dist/script.js"
       },
       "scripts": {
-            "build": "tsc",
+            "build": "tsup",
             "start": "node ./dist/index.js",
-            "test": "vitest"
+            "test": "vitest",
+            "publish": "npm publish"
       },
       "dependencies": {
             "@svgr/core": "^8.1.0",
@@ -30,12 +45,15 @@
             "prettier": "^3.3.3",
             "tsx": "^4.19.2",
             "typescript": "^5.3.3",
-            "vitest": "^2.1.5"
+            "vitest": "^2.1.5",
+            "tsup": "^8.0.1"
       },
       "exports": {
             ".": {
                   "types": "./dist/index.d.ts",
-                  "default": "./dist/index.js"
+                  "import": "./dist/index.mjs",
+                  "require": "./dist/index.js"
             }
-      }
+      },
+      "type": "module"
 }
