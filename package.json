@@ -1,6 +1,6 @@
 {
       "name": "spricon",
-      "version": "1.0.4",
+      "version": "1.0.5",
       "description": "A modern icon bundling powerhouse that transforms your SVG icons into an optimized sprite system with type-safe imports.",
       "author": "Jakkapat Boonroj",
       "license": "MIT",

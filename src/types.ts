@@ -8,6 +8,7 @@ export interface IconData {
 export type Output = {
   spritePath: string | string[];
   distPath: string;
+  spriteHref?: string;
   spriteName?: string;
   hashSuffix?: boolean;
 };

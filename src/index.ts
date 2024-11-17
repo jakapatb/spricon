@@ -16,15 +16,16 @@ const defaultSvgoConfig: SvgoConfig = {
 
 const getSvgIconContent = (
   id: string,
+  spriteHref: string,
   spriteFileName: string,
 ): string => `<svg fill="none" stroke="currentColor" aria-hidden="true" color="currentColor" width="1em" height="1em">
-<use href="/${spriteFileName}.svg#${id}" />
+<use href="${spriteHref}/${spriteFileName}.svg#${id}" />
 </svg>`;
 
 const getIcons = async (
   input: string,
-  suffix = 'Icon',
-  spriteFileName?: string,
+  spriteHref: string,
+  spriteFileName: string,
 ): Promise<IconData[]> => {
   const files = (await fs.readdir(input)).filter((file) => file.endsWith('.svg'));
 
@@ -32,12 +33,9 @@ const getIcons = async (
     files.map(async (file) => {
       const componentName = `${camelcase(file.replace(/\.svg$/, ''), {
         pascalCase: true,
-      })}${suffix}`;
+      })}Icon`;
 
-      const svg =
-        suffix === 'Icon' && spriteFileName
-          ? getSvgIconContent(componentName, spriteFileName)
-          : await fs.readFile(resolve(input, file), 'utf8');
+      const svg = getSvgIconContent(componentName, spriteHref, spriteFileName);
 
       return { svg, componentName };
     }),
@@ -51,10 +49,10 @@ interface IconData {
 
 const buildIcons = async (
   config: Config,
-  suffix: string,
-  spriteFileName?: string,
+  spriteHref: string,
+  spriteFileName: string,
 ): Promise<IconData[]> => {
-  const icons = await getIcons(config.input, suffix, spriteFileName);
+  const icons = await getIcons(config.input, spriteHref, spriteFileName);
 
   // // Generate types
   // const types = `import * as React from 'react';\ndeclare function Icon(props: React.ComponentProps<'svg'> & { name: ${icons
@@ -175,6 +173,7 @@ const buildIndex = async (icons: IconData[], outputPath: string) => {
 const buildIconComponent = async (
   icons: IconData[],
   spriteFileName: string,
+  spriteHref: string | undefined = '',
   outputPath: string,
 ): Promise<IconData[]> => {
   const iconNames = icons.map((icon) => icon.componentName.replace(/Icon$/, ''));
@@ -189,7 +188,9 @@ interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'name'> {
 }
 
 function Icon({ name, ...props }: IconProps) {
-  return <svg fill="none" stroke="currentColor" strokeWidth={0} aria-hidden="true" color="currentColor" width="1em" height="1em" {...props}><use href={${`\`/${spriteFileName}.svg#\${name}\``}} /></svg>
+  return <svg fill="none" stroke="currentColor" strokeWidth={0} aria-hidden="true" color="currentColor" width="1em" height="1em" {...props}>
+  <use href={${`\`${spriteHref ?? ''}/${spriteFileName}.svg#\${name}\``}} />
+  </svg>
 }
 
 export default memo(Icon);`;
@@ -249,10 +250,11 @@ export async function buildSpriteIcons(configInput?: Config) {
   await cleanupOldSpriteFiles(config);
   await cleanupOldDistFiles(config);
   const spriteFileName = await buildSpriteSVG(config, 'Icon', config.svgoConfig);
-  const icons = await buildIcons(config, 'Icon', spriteFileName);
+  const icons = await buildIcons(config, config.output.spriteHref ?? '', spriteFileName);
   const iconsWithComponent = await buildIconComponent(
     icons,
     spriteFileName,
+    config.output.spriteHref,
     config.output.distPath,
   );
   await buildIndex(iconsWithComponent, config.output.distPath);
