@@ -6,7 +6,6 @@ import crypto from 'crypto';
 import { transform } from './transform';
 import { Config } from './types';
 import { ensureWrite } from './utils/file';
-
 const defaultSvgoConfig: SvgoConfig = {
   plugins: ['removeDimensions', 'sortAttrs'],
   js2svg: {
@@ -18,8 +17,8 @@ const defaultSvgoConfig: SvgoConfig = {
 const getSvgIconContent = (
   id: string,
   spriteFileName: string,
-): string => `<svg fill="none" stroke="currentColor" stroke-width="0" aria-hidden="true" color="currentColor" width="1em" height="1em">
-<use href="/sprite-icons/${spriteFileName}.svg#${id}" />
+): string => `<svg fill="none" stroke="currentColor" aria-hidden="true" color="currentColor" width="1em" height="1em">
+<use href="/${spriteFileName}.svg#${id}" />
 </svg>`;
 
 const getIcons = async (
@@ -71,11 +70,11 @@ const buildIcons = async (
         throw error;
       });
 
-      const types = `import * as React from 'react';\ndeclare function ${componentName}(props: React.ComponentProps<'svg'> & { title?: string, titleId?: string, id?:string }): React.ReactElement;\nexport default ${componentName};\n`;
+      // const types = `import * as React from 'react';\ndeclare function ${componentName}(props: React.ComponentProps<'svg'> & { title?: string, titleId?: string, id?:string }): React.ReactElement;\nexport default ${componentName};\n`;
 
       return [
-        ensureWrite(`${config.output.distPath}/${componentName}.js`, content),
-        ...(types ? [ensureWrite(`${config.output.distPath}/${componentName}.d.ts`, types)] : []),
+        ensureWrite(`${config.output.distPath}/${componentName}.tsx`, content),
+        // ...(types ? [ensureWrite(`${config.output.distPath}/${componentName}.d.ts`, types)] : []),
       ];
     }),
   );
@@ -163,13 +162,49 @@ const exportAll = (icons: IconData[], includeExtension = true): string => {
 };
 
 const buildIndex = async (icons: IconData[], outputPath: string) => {
-  await ensureWrite(`${outputPath}/index.d.ts`, exportAll(icons, false));
-  await ensureWrite(`${outputPath}/index.js`, exportAll(icons));
+  await ensureWrite(`${outputPath}/index.ts`, exportAll(icons, false));
+  // await ensureWrite(`${outputPath}/index.js`, exportAll(icons));
 };
 
-export async function buildSpriteIcons() {
-  const config = await readConfig();
+const buildIconComponent = async (
+  icons: IconData[],
+  spriteFileName: string,
+  outputPath: string,
+): Promise<IconData[]> => {
+  const iconNames = icons.map((icon) => icon.componentName.replace(/Icon$/, ''));
+  const iconNamesType = iconNames.map((name) => `'${name}'`).join(' | ');
+
+  const component = `import { SVGProps, memo } from 'react';
+
+export type IconName = ${iconNamesType};
+
+interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'name'> {
+  name: IconName;
+}
+
+function Icon({ name, ...props }: IconProps) {
+  return <svg fill="none" stroke="currentColor" strokeWidth={0} aria-hidden="true" color="currentColor" width="1em" height="1em" {...props}><use href={${`\`/${spriteFileName}.svg#\${name}\``}} /></svg>
+}
+
+export default memo(Icon);`;
+
+  await ensureWrite(`${outputPath}/Icon.tsx`, component);
+
+  return [...icons, { componentName: 'Icon', svg: component }];
+};
+
+export async function buildSpriteIcons(configInput?: Config) {
+  const config = configInput || (await readConfig());
   const spriteFileName = await buildSpriteSVG(config, 'Icon', config.svgoConfig);
   const icons = await buildIcons(config, 'Icon', spriteFileName);
-  await buildIndex(icons, config.output.distPath);
+  const iconsWithComponent = await buildIconComponent(
+    icons,
+    spriteFileName,
+    config.output.distPath,
+  );
+  await buildIndex(iconsWithComponent, config.output.distPath);
 }
+
+export * from './types';
+
+export default buildSpriteIcons;

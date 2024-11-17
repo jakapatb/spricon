@@ -4,7 +4,7 @@ import { TransformOptions } from './types';
 export const transform: TransformOptions = {
   react: async (svg, componentName) => {
     const template: SvgrConfig['template'] = (variables, { tpl }) => {
-      if (variables.props.length > 0) {
+      if (variables.props.length > 0 && 'properties' in variables.props?.[0]) {
         variables.props[0].properties.unshift({
           type: 'ObjectProperty',
           key: { type: 'Identifier', name: 'id' },
@@ -33,7 +33,8 @@ export const transform: TransformOptions = {
       titleProp: true,
       template,
       jsxRuntime: 'automatic',
-      typescript: false,
+      typescript: true,
+      jsx: {},
       plugins: ['@svgr/plugin-jsx'],
       svgo: true,
       svgoConfig: {
@@ -51,11 +52,6 @@ export const transform: TransformOptions = {
     };
 
     let component = await svgrTransform(svg, svgrConfig, { componentName });
-
-    // component = component.replaceAll(/(id=")([^"]*?)(")/g, 'id={`${id}$2`}');
-    // component = component.replaceAll(/("url\(#)([^]*?)(\)")/g, '{`url(#${id}$2)`}');
-    // component = component.replace('id: string,', 'id?: string,');
-    // component = component.replace('id,', 'id: string = "",');
 
     return component;
   },
