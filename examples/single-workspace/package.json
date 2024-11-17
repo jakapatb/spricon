@@ -1,0 +1,15 @@
+{
+      "name": "example-single-workspace",
+      "private": true,
+      "version": "1.0.0",
+      "scripts": {
+            "build": "tsx build-script.ts"
+      },
+      "dependencies": {
+            "react": "^18.2.0",
+            "tsx": "^4.19.2"
+      },
+      "devDependencies": {
+            "sprite-icon-bundler": "file:../.."
+      }
+}

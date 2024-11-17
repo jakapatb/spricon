@@ -1,0 +1,35 @@
+{
+      "name": "sprite-icon-bundler",
+      "version": "1.0.0",
+      "bin": {
+            "sprite-icon-bundler": "./dist/script.js"
+      },
+      "scripts": {
+            "build": "tsc",
+            "start": "node ./dist/index.js"
+      },
+      "dependencies": {
+            "@svgr/core": "^8.1.0",
+            "@svgr/plugin-jsx": "^8.1.0",
+            "@svgr/plugin-prettier": "^8.1.0",
+            "@svgr/plugin-svgo": "^8.1.0",
+            "camelcase": "^8.0.0",
+            "commander": "^11.1.0",
+            "glob": "^10.3.10",
+            "prompts": "^2.4.2",
+            "svgo": "^3.2.0"
+      },
+      "devDependencies": {
+            "@types/node": "^20.11.0",
+            "@types/prompts": "^2.4.9",
+            "prettier": "^3.3.3",
+            "tsx": "^4.19.2",
+            "typescript": "^5.3.3"
+      },
+      "exports": {
+            ".": {
+                  "types": "./dist/index.d.ts",
+                  "default": "./dist/index.js"
+            }
+      }
+}
