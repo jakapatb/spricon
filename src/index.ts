@@ -148,7 +148,9 @@ const readConfig = async (): Promise<Config> => {
       input: resolve(process.cwd(), config.input),
       output: {
         ...config.output,
-        spritePath: resolve(process.cwd(), config.output.spritePath),
+        spritePath: Array.isArray(config.output.spritePath)
+          ? config.output.spritePath.map((path: string) => resolve(process.cwd(), path))
+          : resolve(process.cwd(), config.output.spritePath),
       },
     };
   } catch (error) {
@@ -197,8 +199,55 @@ export default memo(Icon);`;
   return [...icons, { componentName: 'Icon', svg: component }];
 };
 
+const cleanupOldSpriteFiles = async (config: Config) => {
+  // Remove old sprite
+  if (Array.isArray(config.output.spritePath)) {
+    for (const dir of config.output.spritePath) {
+      const exists = await fs
+        .access(dir)
+        .then(() => true)
+        .catch(() => false);
+
+      if (!exists) continue;
+
+      const files = await fs.readdir(dir);
+      const spriteFiles = files.filter((file) =>
+        file.startsWith(config.output.spriteName ?? 'sprite-icons'),
+      );
+      await Promise.all(spriteFiles.map((file) => fs.rm(resolve(dir, file))));
+    }
+  } else {
+    const exists = await fs
+      .access(config.output.spritePath)
+      .then(() => true)
+      .catch(() => false);
+
+    if (!exists) return;
+
+    const files = await fs.readdir(config.output.spritePath);
+    const spriteFiles = files.filter((file) =>
+      file.startsWith(config.output.spriteName ?? 'sprite-icons'),
+    );
+    await Promise.all(spriteFiles.map((file) => fs.rm(file)));
+  }
+};
+
+const cleanupOldDistFiles = async (config: Config) => {
+  const distDir = resolve(config.output.distPath);
+  const exists = await fs
+    .access(distDir)
+    .then(() => true)
+    .catch(() => false);
+
+  if (!exists) return;
+
+  await fs.rm(distDir, { recursive: true, force: true });
+};
+
 export async function buildSpriteIcons(configInput?: Config) {
   const config = configInput || (await readConfig());
+  await cleanupOldSpriteFiles(config);
+  await cleanupOldDistFiles(config);
   const spriteFileName = await buildSpriteSVG(config, 'Icon', config.svgoConfig);
   const icons = await buildIcons(config, 'Icon', spriteFileName);
   const iconsWithComponent = await buildIconComponent(

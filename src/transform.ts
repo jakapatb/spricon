@@ -4,7 +4,7 @@ import { TransformOptions } from './types';
 export const transform: TransformOptions = {
   react: async (svg, componentName) => {
     const template: SvgrConfig['template'] = (variables, { tpl }) => {
-      if (variables.props.length > 0 && 'properties' in variables.props?.[0]) {
+      if (variables.props.length > 0 && 'properties' in variables.props[0]) {
         variables.props[0].properties.unshift({
           type: 'ObjectProperty',
           key: { type: 'Identifier', name: 'id' },
