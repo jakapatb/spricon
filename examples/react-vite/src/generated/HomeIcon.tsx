@@ -10,7 +10,7 @@ const HomeIcon = function HomeIcon({
   titleId,
   ...props
 }: SVGProps<SVGSVGElement> & SVGRProps, ref: Ref<SVGSVGElement>) {
-  return <svg color="currentColor" width="1em" height="1em" ref={ref} aria-labelledby={titleId} {...props}>{title ? <title id={titleId}>{title}</title> : null}<use href="/icons/sprite-icons-97b9b1ec.svg#HomeIcon" /></svg>;
+  return <svg fill="none" stroke="currentColor" strokeWidth={0} color="currentColor" width="1em" height="1em" ref={ref} aria-labelledby={titleId} {...props}>{title ? <title id={titleId}>{title}</title> : null}<use href="/icons/sprite-icons-d947de9f.svg#HomeIcon" /></svg>;
 };
 const ForwardRef = forwardRef(HomeIcon);
 const Memo = memo(ForwardRef);

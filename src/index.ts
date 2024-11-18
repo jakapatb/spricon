@@ -18,7 +18,7 @@ const getSvgIconContent = (
   id: string,
   spriteHref: string,
   spriteFileName: string,
-): string => `<svg color="currentColor" width="1em" height="1em">
+): string => `<svg fill="none" stroke="currentColor" stroke-width="0" color="currentColor" width="1em" height="1em" >
 <use href="${spriteHref}/${spriteFileName}.svg#${id}" />
 </svg>`;
 
@@ -53,12 +53,6 @@ const buildIcons = async (
   spriteFileName: string,
 ): Promise<IconData[]> => {
   const icons = await getIcons(config.input, spriteHref, spriteFileName);
-
-  // // Generate types
-  // const types = `import * as React from 'react';\ndeclare function Icon(props: React.ComponentProps<'svg'> & { name: ${icons
-  //   .map(({ componentName }) => `"${componentName}"`)
-  //   .join(' | ')} }): React.ReactElement;\nexport default Icon;\n`;
-  // await ensureWrite(`${config.output.distPath}/Icon.d.ts`, types);
 
   // Generate icons
   await Promise.all(
@@ -98,11 +92,9 @@ const buildSpriteSVG = async (
         pascalCase: true,
       });
 
-      const attributes = content.match(/(?<=<svg)[^>]+/)?.[0] ?? '';
-
       // Convert SVG to symbol
       return content
-        .replace(/<svg[^>]+>/, `<symbol id="${symbolId}"${attributes}>`)
+        .replace(/<svg[^>]+>/, `<symbol id="${symbolId}">`)
         .replace(/<\/svg>/, '</symbol>')
         .replace(/xmlns="[^"]+"/, '');
     }),
@@ -203,34 +195,38 @@ export default memo(Icon);`;
 
 const cleanupOldSpriteFiles = async (config: Config) => {
   // Remove old sprite
-  if (Array.isArray(config.output.spritePath)) {
-    for (const dir of config.output.spritePath) {
+  try {
+    if (Array.isArray(config.output.spritePath)) {
+      for (const dir of config.output.spritePath) {
+        const exists = await fs
+          .access(dir)
+          .then(() => true)
+          .catch(() => false);
+
+        if (!exists) continue;
+
+        const files = await fs.readdir(dir);
+        const spriteFiles = files.filter((file) =>
+          file.startsWith(config.output.spriteName ?? 'sprite-icons'),
+        );
+        await Promise.all(spriteFiles.map((file) => fs.rm(resolve(dir, file))));
+      }
+    } else {
       const exists = await fs
-        .access(dir)
+        .access(config.output.spritePath)
         .then(() => true)
         .catch(() => false);
 
-      if (!exists) continue;
+      if (!exists) return;
 
-      const files = await fs.readdir(dir);
+      const files = await fs.readdir(config.output.spritePath);
       const spriteFiles = files.filter((file) =>
         file.startsWith(config.output.spriteName ?? 'sprite-icons'),
       );
-      await Promise.all(spriteFiles.map((file) => fs.rm(resolve(dir, file))));
+      await Promise.all(spriteFiles.map((file) => fs.rm(file)));
     }
-  } else {
-    const exists = await fs
-      .access(config.output.spritePath)
-      .then(() => true)
-      .catch(() => false);
-
-    if (!exists) return;
-
-    const files = await fs.readdir(config.output.spritePath);
-    const spriteFiles = files.filter((file) =>
-      file.startsWith(config.output.spriteName ?? 'sprite-icons'),
-    );
-    await Promise.all(spriteFiles.map((file) => fs.rm(file)));
+  } catch (error) {
+    // console.log('Error cleaning up old sprite files', error);
   }
 };
 

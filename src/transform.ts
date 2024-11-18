@@ -34,7 +34,6 @@ export const transform: TransformOptions = {
       template,
       jsxRuntime: 'automatic',
       typescript: true,
-      jsx: {},
       plugins: ['@svgr/plugin-jsx'],
       svgo: true,
       svgoConfig: {

@@ -8,7 +8,7 @@ interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'name'> {
 
 function Icon({ name, ...props }: IconProps) {
   return <svg color="currentColor" width="1em" height="1em" {...props}>
-  <use href={`/icons/sprite-icons-97b9b1ec.svg#${name}`} />
+  <use href={`/icons/sprite-icons-d947de9f.svg#${name}`} />
   </svg>
 }
 
