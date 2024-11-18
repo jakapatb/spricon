@@ -33,20 +33,21 @@
       "devDependencies": {
             "@svgr/core": "^8.1.0",
             "@svgr/plugin-jsx": "^8.1.0",
-            "@svgr/plugin-svgo": "^8.1.0",
             "@svgr/plugin-prettier": "^8.1.0",
+            "@svgr/plugin-svgo": "^8.1.0",
             "@testing-library/jest-dom": "^6.6.3",
             "@testing-library/react": "^16.0.1",
             "@types/node": "^20.11.0",
             "@types/prompts": "^2.4.9",
             "@vitest/ui": "^2.1.5",
+            "glob": "^10.3.10",
             "happy-dom": "^15.11.6",
             "prettier": "^3.3.3",
+            "react": "^18.3.1",
+            "tsup": "^8.0.1",
             "tsx": "^4.19.2",
             "typescript": "^5.3.3",
-            "vitest": "^2.1.5",
-            "tsup": "^8.0.1",
-            "glob": "^10.3.10"
+            "vitest": "^2.1.5"
       },
       "exports": {
             ".": {

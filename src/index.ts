@@ -92,9 +92,11 @@ const buildSpriteSVG = async (
         pascalCase: true,
       });
 
+      const viewBox = content.match(/viewBox="([^"]+)"/)?.[0] ?? '';
+
       // Convert SVG to symbol
       return content
-        .replace(/<svg[^>]+>/, `<symbol id="${symbolId}">`)
+        .replace(/<svg[^>]+>/, `<symbol id="${symbolId}" ${viewBox}>`)
         .replace(/<\/svg>/, '</symbol>')
         .replace(/xmlns="[^"]+"/, '');
     }),

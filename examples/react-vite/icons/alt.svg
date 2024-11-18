@@ -1,0 +1,5 @@
+<svg fill="none" stroke="currentColor" stroke-width="0" aria-hidden="true" color="currentColor" viewBox="0 0 40 40" width="1em">
+  <path fill="currentColor" d="M23 17L20 8L17 17L8 20L17 23L20 32L23 23L32 20L23 17ZM12 20L18 18L19 20H12ZM20 28L18 22L20 21V28ZM20 12L22 18L20 19V12ZM22 22L21 20H28L22 22ZM16.7 25.3L13 27L14.7 23.3L16.3 23.8L16.7 25.3ZM25.3 23.3L27 27L23.3 25.3L23.8 23.7L25.3 23.3ZM14.7 16.7L13 13L16.7 14.7L16.2 16.2L14.7 16.7ZM23.3 14.7L27 13L25.3 16.7L23.7 16.2L23.3 14.7Z"/>
+  <circle cx="20" cy="20" r="16.5" stroke="currentColor"/>
+  <path fill="currentColor" d="M17 4 20 1 23 4 20 7 17 4ZM17 36 20 33 23 36 20 39 17 36ZM1 20 4 17 7 20 4 23 1 20ZM33 20 36 17 39 20 36 23 33 20Z"/>
+</svg>
