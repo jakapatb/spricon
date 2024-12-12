@@ -155,6 +155,9 @@ const exportAll = (icons: IconData[], includeExtension = true): string => {
   return icons
     .map(({ componentName }) => {
       const extension = includeExtension ? '.js' : '';
+      if (componentName === 'Icon') {
+        return `export * from './Icon'`;
+      }
       return `export { default as ${componentName} } from './${componentName}${extension}'`;
     })
     .join('\n');
@@ -172,23 +175,23 @@ const buildIconComponent = async (
   outputPath: string,
 ): Promise<IconData[]> => {
   const iconNames = icons.map((icon) => icon.componentName.replace(/Icon$/, ''));
-  const iconNamesType = iconNames.map((name) => `'${name}'`).join(' | ');
 
   const component = `import { SVGProps, memo } from 'react';
 
-export type IconName = ${iconNamesType};
+export const ICON_NAME_LIST = [${iconNames.map((name) => `'${name}'`).join(', ')}] as const;
+export type IconName = typeof ICON_NAME_LIST[number];
 
 interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'name'> {
   name: IconName;
 }
 
-function Icon({ name, ...props }: IconProps) {
+function RawIcon({ name, ...props }: IconProps) {
   return <svg color="currentColor" width="1em" height="1em" {...props}>
-  <use href={${`\`${spriteHref ?? ''}/${spriteFileName}.svg#\${name}\``}} />
+  <use href={${`\`${spriteHref ?? ''}/${spriteFileName}.svg#\${name}Icon\``}} />
   </svg>
 }
 
-export default memo(Icon);`;
+export const Icon = memo(RawIcon);`;
 
   await ensureWrite(`${outputPath}/Icon.tsx`, component);
 
