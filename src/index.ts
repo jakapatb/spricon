@@ -185,13 +185,13 @@ interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'name'> {
   name: IconName;
 }
 
-function RawIcon({ name, ...props }: IconProps) {
+export function Icon({ name, ...props }: IconProps) {
   return <svg color="currentColor" width="1em" height="1em" {...props}>
   <use href={${`\`${spriteHref ?? ''}/${spriteFileName}.svg#\${name}Icon\``}} />
   </svg>
 }
 
-export const Icon = memo(RawIcon);`;
+export default memo(Icon);`;
 
   await ensureWrite(`${outputPath}/Icon.tsx`, component);
 
